@@ -12,7 +12,7 @@ import {
   BusinessDayQueryDto,
   BusinessDayResponse,
   ErrorResponse,
-} from '../types';
+} from '../types/globals';
 
 @Controller('business-days')
 export class BusinessDayController {

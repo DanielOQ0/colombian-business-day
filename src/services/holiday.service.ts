@@ -1,6 +1,6 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import axios, { AxiosResponse } from 'axios';
-import { HolidayData } from '../types';
+import { HolidayData } from '../types/globals';
 
 @Injectable()
 export class HolidayService {
