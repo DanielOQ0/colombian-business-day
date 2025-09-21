@@ -32,13 +32,6 @@ export interface ErrorResponse {
   message: string;
 }
 
-export interface HolidayData {
-  date: string;
-  name: string;
-  type: string;
-  year: number;
-}
-
 export interface WorkingHours {
   start: number; // 8 (8:00 AM)
   lunchStart: number; // 12 (12:00 PM)

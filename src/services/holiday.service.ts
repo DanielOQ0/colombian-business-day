@@ -1,6 +1,5 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import axios, { AxiosResponse } from 'axios';
-import { HolidayData } from '../types/globals';
 
 @Injectable()
 export class HolidayService {
@@ -32,7 +31,7 @@ export class HolidayService {
   private async fetchHolidays(): Promise<void> {
     try {
       this.logger.log('Fetching Colombian holidays from external API');
-      const response: AxiosResponse<HolidayData[]> = await axios.get(
+      const response: AxiosResponse<string[]> = await axios.get(
         this.HOLIDAYS_URL,
         {
           timeout: 5000,
@@ -49,10 +48,9 @@ export class HolidayService {
 
       this.holidaysCache.clear();
 
-      response.data.forEach((holiday: HolidayData) => {
-        if (holiday.date && typeof holiday.date === 'string') {
-          // Normalize date format to YYYY-MM-DD
-          const dateStr = holiday.date.split('T')[0];
+      response.data.forEach((dateStr: string) => {
+        if (dateStr && typeof dateStr === 'string') {
+          // The API returns dates in YYYY-MM-DD format directly
           this.holidaysCache.add(dateStr);
         }
       });
