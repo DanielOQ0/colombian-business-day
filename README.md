@@ -161,9 +161,98 @@ src/
 - **class-validator/transformer**: Validación y transformación de datos
 - **TypeScript**: Tipado estático con configuración strict
 
-### Características Técnicas
-- **Mensajes Centralizados**: Sistema unificado de logs y errores
-- **Interceptor de Logging**: Logging automático de requests/responses
-- **Caché Inteligente**: Sistema de caché con prevención de llamadas concurrentes
-- **Tipado Estricto**: Configuración TypeScript con flags de seguridad habilitados
-- **Validación Robusta**: Validación de parámetros con manejo de errores consistente
+## ☁️ Despliegue en AWS Lambda con CDK
+
+Se incluye infraestructura como código usando **AWS CDK v2** para desplegar la API como:
+
+- AWS Lambda (Node.js 20) ejecutando NestJS empaquetado vía `esbuild`
+- Amazon API Gateway REST API (Stage: `prod`)
+- CORS abierto (ajusta según tus necesidades)
+
+### 1. Prerrequisitos
+
+- Cuenta de AWS y credenciales configuradas localmente (`aws configure` o variables de entorno)
+- Bootstrap de CDK (solo la primera vez por cuenta/región)
+- Node.js 18/20 y pnpm instalado
+
+Verifica credenciales:
+```powershell
+aws sts get-caller-identity
+```
+
+### 2. Instalación de dependencias
+Ya se agregaron las dependencias en `package.json`, solo asegura instalar:
+```powershell
+pnpm install
+```
+
+### 3. Estructura Infra (carpeta `cdk/`)
+```
+cdk/
+├── bin/
+│   └── colombian-business-day.ts   # EntryPoint CDK App
+├── lib/
+│   └── colombian-business-day-stack.ts  # Stack con Lambda + API Gateway
+├── cdk.json
+└── tsconfig.json
+```
+
+### 4. Bootstrap (solo primera vez por cuenta/región)
+```powershell
+pnpm cdk:bootstrap
+```
+
+### 5. Synthesis (opcional para revisar CloudFormation)
+```powershell
+pnpm cdk:synth
+```
+
+### 6. Desplegar
+```powershell
+pnpm cdk:deploy
+```
+
+Al finalizar verás una salida similar:
+```
+Outputs:
+ColombianBusinessDayStack.BusinessDayApiEndpoint = https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/
+```
+
+Tu endpoint final será, por ejemplo:
+```
+https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/business-days/calculate?days=2&hours=3
+```
+
+### 7. Probar en producción
+```powershell
+curl "https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/business-days/calculate?days=1&hours=2"
+```
+
+### 8. Variables de Entorno
+Si necesitas variables (`HOLIDAYS_API_URL`, etc.) edita en `colombian-business-day-stack.ts` la propiedad `environment` del `NodejsFunction`.
+
+### 9. Limpiar Recursos
+```powershell
+pnpm cdk:destroy
+```
+
+### 10. Costos
+La combinación Lambda + API Gateway entra usualmente en el Free Tier si es bajo volumen. Revisa siempre el [Cost Explorer](https://console.aws.amazon.com/cost-management/home).
+
+### 11. Troubleshooting
+| Problema | Causa probable | Solución |
+|----------|----------------|----------|
+| `AccessDenied` en bootstrap | Rol/credenciales sin permisos | Usa usuario/role con `AdministratorAccess` para bootstrap inicial |
+| Lambda timeout | Lógica pesada o cold start | Incrementa `timeout` en el stack o añade más memoria |
+| 502 en API Gateway | Excepción no controlada en Lambda | Revisa CloudWatch Logs del Lambda |
+| Cambios no reflejados | Cache de código en Lambda | Asegura `pnpm cdk:deploy` completó y no hubo errores |
+
+### 12. Próximos Pasos Recomendados
+- Agregar un dominio personalizado (Route53 + ACM + `RestApi` CustomDomain)
+- Añadir logging estructurado (p.ej. `pino`)
+- Implementar CI/CD (GitHub Actions con `cdk deploy --require-approval never`)
+- Añadir capa (Lambda Layer) para dependencias pesadas compartidas
+- Configurar WAF ante tráfico público
+
+---
+Si necesitas ayuda agregando dominio, CI/CD o variables seguras (SSM Parameter Store / Secrets Manager), abre un issue o pide más detalles.

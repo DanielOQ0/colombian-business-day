@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BusinessDayController } from '../src/controllers/business-day.controller';
 import { BusinessDayService } from '../src/services/business-day.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
 
 describe('BusinessDayController', () => {
   let controller: BusinessDayController;
