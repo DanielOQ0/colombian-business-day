@@ -4,7 +4,6 @@ import {
   Query,
   HttpException,
   HttpStatus,
-  ValidationPipe,
   Logger,
 } from '@nestjs/common';
 import { BusinessDayService } from '../services/business-day.service';
@@ -42,27 +41,7 @@ export class BusinessDayController {
    */
   @Get('calculate')
   async calculateBusinessDays(
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        exceptionFactory: (errors) => {
-          const messages = errors
-            .map((error) => Object.values(error.constraints || {}).join(', '))
-            .join('; ');
-
-          return new HttpException(
-            {
-              error: 'InvalidParameters',
-              message: `Validation failed: ${messages}`,
-            } as ErrorResponse,
-            HttpStatus.BAD_REQUEST,
-          );
-        },
-      }),
-    )
-    query: BusinessDayQueryDto,
+    @Query() query: BusinessDayQueryDto,
   ): Promise<BusinessDayResponse> {
     try {
       // Validate that at least one parameter (days or hours) is provided

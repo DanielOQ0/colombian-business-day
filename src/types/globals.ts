@@ -3,13 +3,21 @@ import { IsOptional, IsString, IsInt, Min, Matches } from 'class-validator';
 
 export class BusinessDayQueryDto {
   @IsOptional()
-  @Transform(({ value }) => parseInt(value as string, 10))
+  @Transform(({ value }) => {
+    if (value === undefined || value === null || value === '') return undefined;
+    const parsed = parseInt(String(value), 10);
+    return isNaN(parsed) ? undefined : parsed;
+  })
   @IsInt({ message: 'days debe ser un número entero' })
   @Min(1, { message: 'days debe ser un número entero positivo' })
   days?: number;
 
   @IsOptional()
-  @Transform(({ value }) => parseInt(value as string, 10))
+  @Transform(({ value }) => {
+    if (value === undefined || value === null || value === '') return undefined;
+    const parsed = parseInt(String(value), 10);
+    return isNaN(parsed) ? undefined : parsed;
+  })
   @IsInt({ message: 'hours debe ser un número entero' })
   @Min(1, { message: 'hours debe ser un número entero positivo' })
   hours?: number;

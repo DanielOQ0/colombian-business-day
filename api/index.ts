@@ -16,6 +16,20 @@ async function bootstrap(): Promise<INestApplication> {
         transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+        exceptionFactory: (errors) => {
+          const messages = errors
+            .map((error) => Object.values(error.constraints || {}).join(', '))
+            .join('; ');
+
+          return {
+            statusCode: 400,
+            error: 'InvalidParameters',
+            message: `Validation failed: ${messages}`,
+          };
+        },
       }),
     );
 
