@@ -40,8 +40,7 @@ describe('BusinessDayService', () => {
       );
 
       // Debería agregar 5 días laborales (Lun-Vie), el resultado debería ser el siguiente lunes
-      const expectedDate = DateTime.fromISO('2025-08-11T15:00:00Z');
-      expect(result).toBe(expectedDate.toISO());
+      expect(result).toBe('2025-08-11T15:00:00.000Z');
     });
 
     it('should add business hours correctly', async () => {

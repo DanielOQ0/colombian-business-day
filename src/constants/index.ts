@@ -27,12 +27,14 @@ export const COLOMBIA_TIMEZONE = 'America/Bogota' as const;
 export const BUSINESS_DAYS = Object.freeze([1, 2, 3, 4, 5] as const);
 
 /**
- * Configuración de caché por defecto
+ * Configuración de caché optimizada para recursos
  */
 export const CACHE_CONFIG = Object.freeze({
   EXPIRY_HOURS: 24,
   MAX_RETRIES: 3,
   TIMEOUT_MS: 5000,
+  MAX_CACHE_SIZE: 1000,
+  CLEANUP_INTERVAL_HOURS: 6,
 } as const);
 
 // Re-exportar constantes de errores y logs para acceso centralizado

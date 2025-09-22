@@ -1,5 +1,12 @@
 import { Transform } from 'class-transformer';
-import { IsOptional, IsString, IsInt, Min, Matches } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsInt,
+  Min,
+  Max,
+  Matches,
+} from 'class-validator';
 
 export class BusinessDayQueryDto {
   @IsOptional()
@@ -8,8 +15,9 @@ export class BusinessDayQueryDto {
     const parsed = parseInt(String(value), 10);
     return isNaN(parsed) ? undefined : parsed;
   })
-  @IsInt({ message: 'days debe ser un número entero' })
-  @Min(1, { message: 'days debe ser un número entero positivo' })
+  @IsInt({ message: 'days must be an integer' })
+  @Min(1, { message: 'days must be a positive integer' })
+  @Max(365, { message: 'days cannot be greater than 365' })
   days?: number;
 
   @IsOptional()
@@ -18,15 +26,18 @@ export class BusinessDayQueryDto {
     const parsed = parseInt(String(value), 10);
     return isNaN(parsed) ? undefined : parsed;
   })
-  @IsInt({ message: 'hours debe ser un número entero' })
-  @Min(1, { message: 'hours debe ser un número entero positivo' })
+  @IsInt({ message: 'hours must be an integer' })
+  @Min(1, { message: 'hours must be a positive integer' })
+  @Max(2920, {
+    message: 'hours cannot be greater than 2920 (365 business days)',
+  })
   hours?: number;
 
   @IsOptional()
-  @IsString({ message: 'date debe ser una cadena de texto' })
+  @IsString({ message: 'date must be a string' })
   @Matches(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/, {
     message:
-      'date debe estar en formato ISO 8601 con sufijo Z (ej: 2025-08-01T14:00:00Z)',
+      'date must be in ISO 8601 format with Z suffix (e.g., 2025-08-01T14:00:00Z)',
   })
   date?: string;
 }
