@@ -32,17 +32,28 @@ export class BusinessDayQueryDto {
 }
 
 export interface BusinessDayResponse {
-  date: string;
+  readonly date: string;
 }
 
 export interface ErrorResponse {
-  error: string;
-  message: string;
+  readonly error: string;
+  readonly message: string;
 }
 
 export interface WorkingHours {
-  start: number;
-  lunchStart: number;
-  lunchEnd: number;
-  end: number;
+  readonly start: number;
+  readonly lunchStart: number;
+  readonly lunchEnd: number;
+  readonly end: number;
+}
+
+// Tipos específicos para mejorar la seguridad de tipos
+export type HolidayDate = string; // formato 'yyyy-MM-dd'
+export type ISODateString = string; // formato ISO 8601
+
+// Tipo para parámetros de entrada más específico
+export interface BusinessDayCalculationParams {
+  readonly days?: number;
+  readonly hours?: number;
+  readonly startDate?: ISODateString;
 }

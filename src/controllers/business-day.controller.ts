@@ -12,6 +12,11 @@ import {
   BusinessDayResponse,
   ErrorResponse,
 } from '../types/globals';
+import {
+  BusinessDayErrorCode,
+  ERROR_MESSAGES,
+  LOG_MESSAGES,
+} from '../constants/index';
 
 /**
  * Controlador REST para el cálculo de días y horas laborales en Colombia.
@@ -48,15 +53,17 @@ export class BusinessDayController {
       if (!query.days && !query.hours) {
         throw new HttpException(
           {
-            error: 'InvalidParameters',
-            message: 'At least one parameter (days or hours) must be provided',
+            error: BusinessDayErrorCode.INVALID_PARAMETERS,
+            message: ERROR_MESSAGES[BusinessDayErrorCode.INVALID_PARAMETERS],
           } as ErrorResponse,
           HttpStatus.BAD_REQUEST,
         );
       }
 
       this.logger.log(
-        `Calculating business days with params: ${JSON.stringify(query)}`,
+        LOG_MESSAGES.BUSINESS_DAY_CALCULATION_PARAMS(
+          query as Record<string, unknown>,
+        ),
       );
 
       const resultDate =
@@ -70,7 +77,7 @@ export class BusinessDayController {
         date: resultDate,
       };
     } catch (error) {
-      this.logger.error('Error calculating business days', error);
+      this.logger.error(LOG_MESSAGES.ERROR_CALCULATING_BUSINESS_DAYS, error);
 
       // Re-throw HttpExceptions (validation errors, service unavailable, etc.)
       if (error instanceof HttpException) {
@@ -80,9 +87,8 @@ export class BusinessDayController {
       // Handle unexpected errors
       throw new HttpException(
         {
-          error: 'InternalServerError',
-          message:
-            'An unexpected error occurred while calculating business days',
+          error: BusinessDayErrorCode.INTERNAL_SERVER_ERROR,
+          message: ERROR_MESSAGES[BusinessDayErrorCode.INTERNAL_SERVER_ERROR],
         } as ErrorResponse,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

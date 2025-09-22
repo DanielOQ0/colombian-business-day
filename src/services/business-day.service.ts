@@ -1,7 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { HolidayService } from './holiday.service';
-import { WORKING_HOURS, COLOMBIA_TIMEZONE } from '../constants/index';
+import {
+  WORKING_HOURS,
+  COLOMBIA_TIMEZONE,
+  LOG_MESSAGES,
+} from '../constants/index';
 
 @Injectable()
 export class BusinessDayService {
@@ -30,7 +34,7 @@ export class BusinessDayService {
       : DateTime.now().setZone(COLOMBIA_TIMEZONE);
 
     this.logger.log(
-      `Starting calculation from: ${currentDateTime.toISO()} (Colombia time)`,
+      LOG_MESSAGES.BUSINESS_DAY_CALCULATION_START(currentDateTime.toISO()!),
     );
 
     // Ajustar a la hora laboral más cercana si está fuera del horario de trabajo
@@ -48,7 +52,7 @@ export class BusinessDayService {
 
     // Convertir de vuelta a UTC para la respuesta
     const resultUTC = currentDateTime.toUTC().toISO();
-    this.logger.log(`Final result: ${resultUTC} (UTC)`);
+    this.logger.log(LOG_MESSAGES.BUSINESS_DAY_CALCULATION_RESULT(resultUTC!));
 
     return resultUTC!;
   }

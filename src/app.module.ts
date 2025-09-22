@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BusinessDayController } from './controllers/business-day.controller';
 import { BusinessDayService } from './services/business-day.service';
 import { HolidayService } from './services/holiday.service';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
 
 @Module({
   imports: [
@@ -14,6 +16,14 @@ import { HolidayService } from './services/holiday.service';
     }),
   ],
   controllers: [AppController, BusinessDayController],
-  providers: [AppService, BusinessDayService, HolidayService],
+  providers: [
+    AppService,
+    BusinessDayService,
+    HolidayService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
 })
 export class AppModule {}

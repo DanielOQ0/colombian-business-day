@@ -1,15 +1,22 @@
 import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import axios, { AxiosResponse } from 'axios';
+import {
+  CACHE_CONFIG,
+  BusinessDayErrorCode,
+  ERROR_MESSAGES,
+  LOG_MESSAGES,
+} from '../constants/index';
 
 @Injectable()
 export class HolidayService {
   private readonly logger = new Logger(HolidayService.name);
   private holidaysCache: Set<string> = new Set();
   private lastFetchDate: Date | null = null;
-  private readonly CACHE_EXPIRY_HOURS = 24;
+  private readonly CACHE_EXPIRY_HOURS = CACHE_CONFIG.EXPIRY_HOURS;
   private readonly HOLIDAYS_URL =
     process.env.HOLIDAYS_API_URL ||
     'https://content.capta.co/Recruitment/WorkingDays.json';
+  private fetchPromise: Promise<void> | null = null; // Prevenir múltiples llamadas concurrentes
 
   /**
    * Obtiene la lista de festivos oficiales colombianos desde una fuente externa.
@@ -21,7 +28,13 @@ export class HolidayService {
    */
   async getColombianHolidays(): Promise<Set<string>> {
     if (this.shouldRefreshCache()) {
-      await this.fetchHolidays();
+      // Prevenir múltiples llamadas concurrentes
+      if (!this.fetchPromise) {
+        this.fetchPromise = this.fetchHolidays().finally(() => {
+          this.fetchPromise = null;
+        });
+      }
+      await this.fetchPromise;
     }
     return this.holidaysCache;
   }
@@ -61,11 +74,11 @@ export class HolidayService {
    */
   private async fetchHolidays(): Promise<void> {
     try {
-      this.logger.log('Fetching Colombian holidays from external API');
+      this.logger.log(LOG_MESSAGES.HOLIDAYS_FETCH_START);
       const response: AxiosResponse<string[]> = await axios.get(
         this.HOLIDAYS_URL,
         {
-          timeout: 5000,
+          timeout: CACHE_CONFIG.TIMEOUT_MS,
           headers: {
             Accept: 'application/json',
             'User-Agent': 'colombian-business-day-api/1.0.0',
@@ -86,24 +99,23 @@ export class HolidayService {
       });
 
       this.lastFetchDate = new Date();
-      this.logger.log(`Cached ${this.holidaysCache.size} Colombian holidays`);
+      this.logger.log(LOG_MESSAGES.HOLIDAYS_CACHED(this.holidaysCache.size));
     } catch (error) {
-      this.logger.error('Failed to fetch Colombian holidays', error);
+      this.logger.error(LOG_MESSAGES.HOLIDAYS_FETCH_ERROR, error);
 
       if (this.holidaysCache.size === 0) {
         // Si no tenemos datos en caché y la petición falla, lanzar error
         throw new HttpException(
           {
-            error: 'ServiceUnavailable',
-            message:
-              'Unable to fetch Colombian holidays data. Please try again later.',
+            error: BusinessDayErrorCode.SERVICE_UNAVAILABLE,
+            message: ERROR_MESSAGES[BusinessDayErrorCode.SERVICE_UNAVAILABLE],
           },
           HttpStatus.SERVICE_UNAVAILABLE,
         );
       }
 
       // Si tenemos datos en caché, registrar el error pero continuar con datos en caché
-      this.logger.warn('Using cached holiday data due to fetch failure');
+      this.logger.warn(LOG_MESSAGES.HOLIDAYS_USING_CACHE);
     }
   }
 

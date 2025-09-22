@@ -1,10 +1,10 @@
 # Colombian Business Day API
 
-API REST para calcular días y horas hábiles según las reglas de negocio colombianas.
+API REST para calcular días y horas hábiles usando la zona horaria de Colombia.
 
 ## 📋 Descripción
 
-Esta API calcula días y horas hábiles siguiendo las reglas de negocio colombianas, incluyendo:
+Esta API calcula días y horas hábiles configurada para la zona horaria colombiana, incluyendo:
 - Horario laboral de 8:00 AM a 5:00 PM (hora de Colombia)
 - Pausa de almuerzo de 12:00 PM a 1:00 PM
 - Exclusión de fines de semana y días festivos colombianos
@@ -48,7 +48,7 @@ Variables disponibles:
 
 **GET** `/business-days/calculate`
 
-Calcula días y horas hábiles según las reglas de negocio colombianas.
+Calcula días y horas hábiles usando la zona horaria de Colombia.
 
 #### Query Parameters
 
@@ -138,10 +138,13 @@ pnpm test:watch
 ### Estructura del Proyecto
 ```
 src/
-├── constants/           # Constantes
-│   ├── index.ts
-├── controllers/          # Controladores REST
+├── constants/           # Constantes y mensajes centralizados
+│   ├── index.ts        # Re-exporta todas las constantes
+│   └── errors.ts       # Códigos de error y mensajes de log
+├── controllers/         # Controladores REST
 │   └── business-day.controller.ts
+├── interceptors/        # Interceptors globales
+│   └── logging.interceptor.ts
 ├── services/            # Lógica de negocio
 │   ├── business-day.service.ts
 │   └── holiday.service.ts
@@ -156,4 +159,11 @@ src/
 - **Luxon**: Manejo avanzado de fechas y zonas horarias
 - **Axios**: Cliente HTTP para obtener días festivos
 - **class-validator/transformer**: Validación y transformación de datos
-- **TypeScript**: Tipado estático para JavaScript
+- **TypeScript**: Tipado estático con configuración strict
+
+### Características Técnicas
+- **Mensajes Centralizados**: Sistema unificado de logs y errores
+- **Interceptor de Logging**: Logging automático de requests/responses
+- **Caché Inteligente**: Sistema de caché con prevención de llamadas concurrentes
+- **Tipado Estricto**: Configuración TypeScript con flags de seguridad habilitados
+- **Validación Robusta**: Validación de parámetros con manejo de errores consistente
