@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { DateTime } from 'luxon';
 import { HolidayService } from './holiday.service';
-import { WORKING_HOURS, COLOMBIA_TIMEZONE } from '../constants';
+import { WORKING_HOURS, COLOMBIA_TIMEZONE } from '../constants/index';
 
 @Injectable()
 export class BusinessDayService {

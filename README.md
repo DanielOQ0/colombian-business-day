@@ -118,14 +118,14 @@ pnpm test:e2e
 ```
 src/
 ├── constants/           # Constantes
-│   └── index.ts
+│   ├── index.ts
 ├── controllers/          # Controladores REST
 │   └── business-day.controller.ts
 ├── services/            # Lógica de negocio
 │   ├── business-day.service.ts
 │   └── holiday.service.ts
 ├── types/               # Tipos e interfaces TypeScript
-│   └── index.ts
+│   └── globals.ts
 ├── app.module.ts        # Módulo principal
 └── main.ts             # Punto de entrada
 ```
