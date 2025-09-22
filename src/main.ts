@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, HttpStatus } from '@nestjs/common';
+import { ValidationPipe, HttpStatus, HttpException } from '@nestjs/common';
+import { BusinessDayErrorCode } from './constants';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -19,11 +20,13 @@ async function bootstrap() {
           .map((error) => Object.values(error.constraints || {}).join(', '))
           .join('; ');
 
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          error: 'InvalidParameters',
-          message: `Validation failed: ${messages}`,
-        };
+        return new HttpException(
+          {
+            error: BusinessDayErrorCode.INVALID_PARAMETERS,
+            message: `Validation failed: ${messages}`,
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       },
     }),
   );
