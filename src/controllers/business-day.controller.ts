@@ -14,12 +14,32 @@ import {
   ErrorResponse,
 } from '../types/globals';
 
+/**
+ * Controlador REST para el cálculo de días y horas laborales en Colombia.
+ * Proporciona endpoints para calcular fechas futuras considerando horarios laborales,
+ * fines de semana y festivos oficiales colombianos.
+ */
 @Controller('business-days')
 export class BusinessDayController {
   private readonly logger = new Logger(BusinessDayController.name);
 
   constructor(private readonly businessDayService: BusinessDayService) {}
 
+  /**
+   * Endpoint para calcular una fecha futura agregando días y/o horas laborales.
+   *
+   * @route GET /business-days/calculate
+   * @param query - Parámetros de consulta validados
+   * @param query.days - Número de días laborales a agregar (opcional, debe ser entero positivo)
+   * @param query.hours - Número de horas laborales a agregar (opcional, debe ser entero positivo)
+   * @param query.date - Fecha inicial en formato ISO 8601 UTC (opcional, por defecto usa fecha actual)
+   * @returns Promise que resuelve a un objeto con la fecha calculada en formato ISO 8601 UTC
+   *
+   * @throws {HttpException} 400 - InvalidParameters: Si no se proporciona al menos un parámetro (days o hours)
+   * @throws {HttpException} 400 - InvalidParameters: Si los parámetros no pasan la validación
+   * @throws {HttpException} 503 - ServiceUnavailable: Si no se pueden obtener los festivos colombianos
+   * @throws {HttpException} 500 - InternalServerError: Para errores inesperados
+   */
   @Get('calculate')
   async calculateBusinessDays(
     @Query(
