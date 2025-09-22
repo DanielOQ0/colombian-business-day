@@ -14,7 +14,7 @@ Esta API calcula días y horas hábiles siguiendo las reglas de negocio colombia
 
 ### Prerrequisitos
 - Node.js (v18 o superior)
-- pnpm (recomendado) // npm
+- pnpm (recomendado) o npm
 
 ### Instalación
 ```bash
@@ -28,6 +28,19 @@ pnpm start:dev
 pnpm build
 pnpm start:prod
 ```
+
+### Variables de Entorno
+Copia el archivo `.env.example` a `.env` y configura las variables según tu entorno:
+
+```bash
+# Copiar archivo de ejemplo
+cp .env.example .env
+```
+
+Variables disponibles:
+- **`PORT`**: Puerto del servidor (default: 3000)
+- **`HOLIDAYS_API_URL`**: URL de la API de días festivos
+- **`NODE_ENV`**: Ambiente de ejecución (development/production)
 
 ## 📋 API Documentation
 
@@ -110,7 +123,15 @@ pnpm test:cov
 
 # Ejecutar tests e2e
 pnpm test:e2e
+
+# Ejecutar tests en modo watch
+pnpm test:watch
 ```
+
+### Tests Incluidos
+- **Unit tests**: Servicios y controladores individuales
+- **E2E tests**: Pruebas de integración completas
+- **Cobertura**: Reportes de cobertura de código generados
 
 ## 🏗️ Arquitectura
 
@@ -131,7 +152,8 @@ src/
 ```
 
 ### Dependencias Principales
-- **NestJS**: Framework Node.js
-- **Luxon**: Manejo de fechas y zonas horarias
-- **Axios**: Cliente HTTP para obtener feriados
-- **class-validator/transformer**: Validación y transformación
+- **NestJS**: Framework Node.js para aplicaciones escalables
+- **Luxon**: Manejo avanzado de fechas y zonas horarias
+- **Axios**: Cliente HTTP para obtener días festivos
+- **class-validator/transformer**: Validación y transformación de datos
+- **TypeScript**: Tipado estático para JavaScript

@@ -8,6 +8,7 @@ export class HolidayService {
   private lastFetchDate: Date | null = null;
   private readonly CACHE_EXPIRY_HOURS = 24;
   private readonly HOLIDAYS_URL =
+    process.env.HOLIDAYS_API_URL ||
     'https://content.capta.co/Recruitment/WorkingDays.json';
 
   /**

@@ -1,0 +1,15 @@
+node_modules
+.git
+.env*
+test
+coverage
+*.log
+.DS_Store
+.vscode
+.idea
+*.spec.ts
+*.test.ts
+jest.config.js
+eslint.config.mjs
+*.md
+!README.md
