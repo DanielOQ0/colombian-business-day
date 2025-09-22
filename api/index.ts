@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, HttpException, HttpStatus } from '@nestjs/common';
+import { BusinessDayErrorCode } from '../src/constants';
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { INestApplication } from '@nestjs/common';
 
@@ -16,19 +17,18 @@ async function bootstrap(): Promise<INestApplication> {
         transform: true,
         whitelist: true,
         forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
+        transformOptions: { enableImplicitConversion: true },
         exceptionFactory: (errors) => {
           const messages = errors
             .map((error) => Object.values(error.constraints || {}).join(', '))
             .join('; ');
-
-          return {
-            statusCode: 400,
-            error: 'InvalidParameters',
-            message: `Validation failed: ${messages}`,
-          };
+          return new HttpException(
+            {
+              error: BusinessDayErrorCode.INVALID_PARAMETERS,
+              message: `Validation failed: ${messages}`,
+            },
+            HttpStatus.BAD_REQUEST,
+          );
         },
       }),
     );
