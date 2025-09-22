@@ -140,5 +140,27 @@ describe('BusinessDayController (e2e)', () => {
           expect(res.body.error).toBe('InvalidParameters');
         });
     });
+
+    it('should return error when days invalid but hours valid', () => {
+      return request(app.getHttpServer())
+        .get('/business-days/calculate')
+        .query({ days: 'j', hours: 4 })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body).toHaveProperty('error');
+          expect(res.body.error).toBe('InvalidParameters');
+        });
+    });
+
+    it('should return error when hours invalid but days valid', () => {
+      return request(app.getHttpServer())
+        .get('/business-days/calculate')
+        .query({ days: 5, hours: 'h' })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body).toHaveProperty('error');
+          expect(res.body.error).toBe('InvalidParameters');
+        });
+    });
   });
 });

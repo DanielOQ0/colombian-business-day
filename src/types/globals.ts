@@ -13,7 +13,12 @@ export class BusinessDayQueryDto {
   @Transform(({ value }) => {
     if (value === undefined || value === null || value === '') return undefined;
     const parsed = parseInt(String(value), 10);
-    return isNaN(parsed) ? undefined : parsed;
+    // Si no es un número válido devolvemos el valor original para que falle @IsInt en vez de silenciarlo
+    if (isNaN(parsed)) {
+      // Forzamos string para que el validador @IsInt falle sin ensuciar el tipo
+      return String(value);
+    }
+    return parsed;
   })
   @IsInt({ message: 'days must be an integer' })
   @Min(1, { message: 'days must be a positive integer' })
@@ -24,7 +29,10 @@ export class BusinessDayQueryDto {
   @Transform(({ value }) => {
     if (value === undefined || value === null || value === '') return undefined;
     const parsed = parseInt(String(value), 10);
-    return isNaN(parsed) ? undefined : parsed;
+    if (isNaN(parsed)) {
+      return String(value);
+    }
+    return parsed;
   })
   @IsInt({ message: 'hours must be an integer' })
   @Min(1, { message: 'hours must be a positive integer' })
