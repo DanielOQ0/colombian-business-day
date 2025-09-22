@@ -1,8 +1,7 @@
 /* Lambda bootstrap for NestJS via serverless-express */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, HttpStatus, HttpException } from '@nestjs/common';
-import { BusinessDayErrorCode } from './constants';
+import { createValidationPipe } from './config/validation';
 import serverlessExpress from '@vendia/serverless-express';
 import type { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
 
@@ -16,26 +15,7 @@ async function bootstrapServer(): Promise<InternalServer> {
     logger: ['error', 'warn', 'log'],
   });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transformOptions: { enableImplicitConversion: true },
-      exceptionFactory: (errors) => {
-        const messages = errors
-          .map((error) => Object.values(error.constraints ?? {}).join(', '))
-          .join('; ');
-        return new HttpException(
-          {
-            error: BusinessDayErrorCode.INVALID_PARAMETERS,
-            message: `Validation failed: ${messages}`,
-          },
-          HttpStatus.BAD_REQUEST,
-        );
-      },
-    }),
-  );
+  app.useGlobalPipes(createValidationPipe());
 
   await app.init();
   const expressApp = app.getHttpAdapter().getInstance();
