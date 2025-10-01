@@ -26,8 +26,8 @@ async function bootstrapServer(): Promise<InternalServer> {
 export const handler: APIGatewayProxyHandler = async (event, context) => {
   const server = await bootstrapServer();
   return await new Promise<APIGatewayProxyResult>((resolve, reject) => {
-    // serverlessExpress handler invocation
-    // Wrap in void to avoid no-floating-promises false positive inside callback chain
+    // invocar el servidor express con el evento y contexto de Lambda
+    // y manejar la respuesta en la devolución de llamada
     void server(event, context, (err, result) => {
       if (err) {
         reject(err instanceof Error ? err : new Error(String(err)));

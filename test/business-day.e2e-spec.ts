@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { createValidationPipe } from '../src/config/validation';
 
 describe('BusinessDayController (e2e)', () => {
   let app: INestApplication;
@@ -12,6 +13,10 @@ describe('BusinessDayController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
+
+    // Configurar validación global igual que en la aplicación
+    app.useGlobalPipes(createValidationPipe());
+
     await app.init();
   });
 
@@ -119,7 +124,7 @@ describe('BusinessDayController (e2e)', () => {
         .get('/business-days/calculate')
         .query({
           days: 1,
-          date: '2025-08-01T14:00:00', // Missing Z
+          date: '2025-08-01T14:00:00',
         })
         .expect(400)
         .expect((res) => {

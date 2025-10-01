@@ -24,7 +24,7 @@ export const ERROR_MESSAGES = Object.freeze({
  * Mensajes de log centralizados para consistencia en toda la aplicación
  */
 export const LOG_MESSAGES = Object.freeze({
-  // BusinessDayService messages
+  // Mnesajes del BusinessDayController
   BUSINESS_DAY_CALCULATION_START: (startDate: string) =>
     `Starting calculation from: ${startDate} (Colombia time)`,
   BUSINESS_DAY_CALCULATION_RESULT: (resultUTC: string) =>
@@ -32,17 +32,17 @@ export const LOG_MESSAGES = Object.freeze({
   BUSINESS_DAY_CALCULATION_PARAMS: (params: Record<string, unknown>) =>
     `Calculating business days with params: ${JSON.stringify(params)}`,
 
-  // HolidayService messages
+  // Mensajes del BusinessDayService
   HOLIDAYS_FETCH_START: 'Fetching Colombian holidays from external API',
   HOLIDAYS_CACHED: (count: number) => `Cached ${count} Colombian holidays`,
   HOLIDAYS_FETCH_ERROR: 'Failed to fetch Colombian holidays',
   HOLIDAYS_USING_CACHE: 'Using cached holiday data due to fetch failure',
 
-  // Generic error messages
+  // Mensajes de errores generales
   ERROR_CALCULATING_BUSINESS_DAYS: 'Error calculating business days',
   SERVICE_ERROR: 'Service error',
 
-  // Interceptor messages
+  // Mensajes de interceptores
   REQUEST_LOG: (method: string, url: string, query: unknown, body: unknown) =>
     `${method} ${url} - Query: ${JSON.stringify(query)} - Body: ${JSON.stringify(body)}`,
   RESPONSE_LOG: (

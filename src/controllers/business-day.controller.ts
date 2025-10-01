@@ -79,7 +79,6 @@ export class BusinessDayController {
     } catch (error) {
       this.logger.error(LOG_MESSAGES.ERROR_CALCULATING_BUSINESS_DAYS, error);
 
-      // Re-throw HttpExceptions (validation errors, service unavailable, etc.)
       if (error instanceof HttpException) {
         throw error;
       }
