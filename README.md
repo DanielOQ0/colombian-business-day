@@ -78,17 +78,21 @@ curl "http://localhost:3000/business-days/calculate?days=2&hours=4&date=2025-08-
 ##### Respuesta Exitosa (200 OK)
 ```json
 {
-  "date": "2025-08-01T14:00:00.000Z"
+  "date": "2025-08-01T14:00:00Z"
 }
 ```
 
-##### Errores (400 Bad Request, 503 Service Unavailable)
+**Nota:** La fecha se devuelve en formato ISO 8601 UTC sin milisegundos.
+
+##### Errores (400 Bad Request, 404 Not Found, 503 Service Unavailable)
 ```json
 {
   "error": "InvalidParameters",
   "message": "Detalle del error"
 }
 ```
+
+**Nota:** Las respuestas de error contienen únicamente los campos `error` y `message`.
 
 ## 📚 Reglas de Negocio
 
