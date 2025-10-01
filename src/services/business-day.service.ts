@@ -51,7 +51,10 @@ export class BusinessDayService {
     }
 
     // Convertir de vuelta a UTC para la respuesta
-    const resultUTC = currentDateTime.toUTC().toISO();
+    // Usar formato ISO sin milisegundos para cumplir con los requerimientos
+    const resultUTC = currentDateTime
+      .toUTC()
+      .toISO({ suppressMilliseconds: true });
     this.logger.log(LOG_MESSAGES.BUSINESS_DAY_CALCULATION_RESULT(resultUTC!));
 
     return resultUTC!;
